@@ -13,6 +13,7 @@ from graphsage.utils import load_data
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 
+
 # Set random seed
 seed = 123
 np.random.seed(seed)
@@ -34,7 +35,7 @@ flags.DEFINE_string('train_prefix', '', 'name of the object file that stores the
 flags.DEFINE_integer('epochs', 1, 'number of epochs to train.')
 flags.DEFINE_float('dropout', 0.0, 'dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0.0, 'weight for l2 loss on embedding matrix.')
-flags.DEFINE_integer('max_degree', 100, 'maximum node degree.')
+flags.DEFINE_integer('max_degree', 1000, 'maximum node degree.')
 flags.DEFINE_integer('samples_1', 25, 'number of samples in layer 1')
 flags.DEFINE_integer('samples_2', 10, 'number of users samples in layer 2')
 flags.DEFINE_integer('dim_1', 128, 'Size of output dim (final is 2x this, if using concat)')
@@ -50,7 +51,7 @@ flags.DEFINE_boolean('save_embeddings', True, 'whether to save embeddings for al
 flags.DEFINE_string('base_log_dir', '.', 'base directory for logging and saving embeddings')
 flags.DEFINE_integer('validate_iter', 5000, "how often to run a validation minibatch.")
 flags.DEFINE_integer('validate_batch_size', 256, "how many nodes per validation sample.")
-flags.DEFINE_integer('gpu', 1, "which gpu to use.")
+flags.DEFINE_integer('gpu', 0, "which gpu to use.")
 flags.DEFINE_integer('print_every', 50, "How often to print training info.")
 flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
 
@@ -233,7 +234,7 @@ def train(train_data, test_data=None):
     else:
         raise Exception('Error: model name unrecognized.')
 
-    config = tf.ConfigProto(log_device_placement=FLAGS.log_device_placement)
+    config = tf.ConfigProto(log_device_placement=FLAGS.log_device_placement, intra_op_parallelism_threads=32)
     config.gpu_options.allow_growth = True
     #config.gpu_options.per_process_gpu_memory_fraction = GPU_MEM_FRACTION
     config.allow_soft_placement = True

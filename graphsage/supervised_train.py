@@ -52,8 +52,8 @@ flags.DEFINE_integer('identity_dim', 0, 'Set to positive value to use identity e
 flags.DEFINE_string('base_log_dir', '.', 'base directory for logging and saving embeddings')
 flags.DEFINE_integer('validate_iter', 5000, "how often to run a validation minibatch.")
 flags.DEFINE_integer('validate_batch_size', 256, "how many nodes per validation sample.")
-flags.DEFINE_integer('gpu', 1, "which gpu to use.")
-flags.DEFINE_integer('print_every', 5, "How often to print training info.")
+flags.DEFINE_integer('gpu', 0, "which gpu to use.")
+flags.DEFINE_integer('print_every', 50, "How often to print training info.")
 flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
 
 os.environ["CUDA_VISIBLE_DEVICES"]=str(FLAGS.gpu)
@@ -67,6 +67,8 @@ def calc_f1(y_true, y_pred):
     else:
         y_pred[y_pred > 0.5] = 1
         y_pred[y_pred <= 0.5] = 0
+    print(metrics.accuracy_score(y_pred, y_true))
+    print(metrics.accuracy_score(y_true, y_pred))
     return metrics.f1_score(y_true, y_pred, average="micro"), metrics.f1_score(y_true, y_pred, average="macro")
 
 # Define model evaluation function

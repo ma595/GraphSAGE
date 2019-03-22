@@ -13,7 +13,7 @@ major = version_info[0]
 minor = version_info[1]
 assert (major <= 1) and (minor <= 11), "networkx major version > 1.11"
 
-WALK_LEN=5
+WALK_LEN=5 # previously 5 
 N_WALKS=50
 
 def load_data(prefix, normalize=True, load_walks=False):
@@ -74,14 +74,18 @@ def load_data(prefix, normalize=True, load_walks=False):
 
     return G, feats, id_map, walks, class_map
 
-def run_random_walks(G, nodes, num_walks=N_WALKS):
+def run_random_walks(G, nodes, num_walks=N_WALKS, len_walks=WALK_LEN):
     pairs = []
+
     for count, node in enumerate(nodes):
         if G.degree(node) == 0:
             continue
         for i in range(num_walks):
             curr_node = node
             for j in range(WALK_LEN):
+                # need to have a neighbor!
+                if len(G.neighbors(curr_node)) == 0:
+                    break
                 next_node = random.choice(G.neighbors(curr_node))
                 # self co-occurrences are useless
                 if curr_node != node:
