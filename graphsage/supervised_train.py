@@ -67,7 +67,7 @@ def calc_f1(y_true, y_pred):
     else:
         y_pred[y_pred > 0.5] = 1
         y_pred[y_pred <= 0.5] = 0
-    print(metrics.accuracy_score(y_pred, y_true))
+    # print(metrics.accuracy_score(y_pred, y_true))
     print(metrics.accuracy_score(y_true, y_pred))
     return metrics.f1_score(y_true, y_pred, average="micro"), metrics.f1_score(y_true, y_pred, average="macro")
 
