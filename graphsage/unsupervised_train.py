@@ -339,7 +339,7 @@ def train(train_data, test_data=None):
             from graphsage.utils import run_random_walks
             nodes = [n for n in G.nodes_iter() if G.node[n]["val"] or G.node[n]["test"]]
             start_time = time.time()
-            pairs = run_random_walks(G, nodes, num_walks=50)
+            pairs = run_random_walks(G, nodes, num_walks=50, len_walks=5)
             walk_time = time.time() - start_time
 
             test_minibatch = EdgeMinibatchIterator(G, 
