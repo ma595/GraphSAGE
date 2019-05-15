@@ -82,7 +82,7 @@ def run_random_walks(G, nodes, num_walks=N_WALKS, len_walks=WALK_LEN):
             continue
         for i in range(num_walks):
             curr_node = node
-            for j in range(WALK_LEN):
+            for j in range(len_walks):
                 # need to have a neighbor!
                 if len(G.neighbors(curr_node)) == 0:
                     break
