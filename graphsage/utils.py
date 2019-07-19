@@ -86,7 +86,12 @@ def run_random_walks(G, nodes, num_walks=N_WALKS, len_walks=WALK_LEN):
                 # need to have a neighbor!
                 if len(G.neighbors(curr_node)) == 0:
                     break
-                next_node = random.choice(G.neighbors(curr_node))
+                neighbors = np.array(G.neighbors(curr_node))
+                weights = np.array([G[curr_node][n]['weight'] for n in neighbors])
+                prob = weights/np.sum(weights)
+                alpha = 0.5
+                prob = alpha * np.ones(len(prob))*(1/len(prob)) + (1 - alpha) * prob
+                next_node = np.random.choice(neighbors, p=prob)
                 # self co-occurrences are useless
                 if curr_node != node:
                     pairs.append((node,curr_node))
