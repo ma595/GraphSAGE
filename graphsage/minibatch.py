@@ -250,11 +250,6 @@ class NodeMinibatchIterator(object):
                 tail = np.random.choice(neighbors, self.max_degree - len(neighbors),
                                         p=weights/np.sum(weights), replace=True)
                 neighbors = np.append(neighbors, tail)
-            if len(neighbors) > self.max_degree:
-                neighbors = np.random.choice(neighbors, self.max_degree, replace=False)
-            elif len(neighbors) < self.max_degree:
-                neighbors = np.random.choice(neighbors, self.max_degree, replace=True)
-            adj[self.id2idx[nodeid], :] = neighbors
         return adj, deg
 
     def construct_test_adj(self):
