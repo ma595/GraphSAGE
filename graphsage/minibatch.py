@@ -89,7 +89,8 @@ class EdgeMinibatchIterator(object):
 
             # MODS for weighted graph
             weights = np.array([self.G[nodeid][neighbor]['weight']
-                                for neighbor in self.G.neighbors(nodeid)])
+                                for neighbor in self.G.neighbors(nodeid)
+                                if (not self.G[nodeid][neighbor]['train_removed'])])
             ind = np.argsort(weights)[:-self.max_degree-1:-1]
             neighbors = neighbors[ind]
             weights = weights[ind]
@@ -260,7 +261,8 @@ class NodeMinibatchIterator(object):
                 
             # MODS for weighted graph
             weights = np.array([self.G[nodeid][neighbor]['weight']
-                                for neighbor in self.G.neighbors(nodeid)])
+                                for neighbor in self.G.neighbors(nodeid)
+                                if (not self.G[nodeid][neighbor]['train_removed'])])
             ind = np.argsort(weights)[:-self.max_degree-1:-1]
             neighbors = neighbors[ind]
             weights = weights[ind]
