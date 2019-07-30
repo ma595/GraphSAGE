@@ -86,12 +86,23 @@ class EdgeMinibatchIterator(object):
             deg[self.id2idx[nodeid]] = len(neighbors)
             if len(neighbors) == 0:
                 continue
-            if len(neighbors) > self.max_degree:
-                neighbors = np.random.choice(neighbors, self.max_degree, replace=False)
-            elif len(neighbors) < self.max_degree:
-                neighbors = np.random.choice(neighbors, self.max_degree, replace=True)
+
+            # MODS for weighted graph
+            weights = np.array([self.G[nodeid][neighbor]['weight']
+                                for neighbor in self.G.neighbors(nodeid)])
+            ind = np.argsort(weights)[:-self.max_degree-1:-1]
+            neighbors = neighbors[ind]
+            weights = weights[ind]
+            
+            # neighbors has max length  self.max_degree
+            if len(neighbors) < self.max_degree:
+                tail = np.random.choice(neighbors, self.max_degree - len(neighbors),
+                                        p=weights/np.sum(weights), replace=True)
+                neighbors = np.append(neighbors, tail)
+
             adj[self.id2idx[nodeid], :] = neighbors
         return adj, deg
+
 
     def construct_test_adj(self):
         adj = len(self.id2idx)*np.ones((len(self.id2idx)+1, self.max_degree))
@@ -100,10 +111,19 @@ class EdgeMinibatchIterator(object):
                 for neighbor in self.G.neighbors(nodeid)])
             if len(neighbors) == 0:
                 continue
-            if len(neighbors) > self.max_degree:
-                neighbors = np.random.choice(neighbors, self.max_degree, replace=False)
-            elif len(neighbors) < self.max_degree:
-                neighbors = np.random.choice(neighbors, self.max_degree, replace=True)
+
+            # MODS for weighted graph
+            weights = np.array([self.G[nodeid][neighbor]['weight']
+                                for neighbor in self.G.neighbors(nodeid)])
+            ind = np.argsort(weights)[:-self.max_degree-1:-1]
+            neighbors = neighbors[ind]
+            weights = weights[ind]
+            
+            # neighbors has max length  self.max_degree
+            if len(neighbors) < self.max_degree:
+                tail = np.random.choice(neighbors, self.max_degree - len(neighbors),
+                                        p=weights/np.sum(weights), replace=True)
+                neighbors = np.append(neighbors, tail) 
             adj[self.id2idx[nodeid], :] = neighbors
         return adj
 
@@ -239,8 +259,8 @@ class NodeMinibatchIterator(object):
                 continue
                 
             # MODS for weighted graph
-            weights = np.array([G[nodeid][neighbor]['weight']
-                                for neighbor in G.neighbors(nodeid)])
+            weights = np.array([self.G[nodeid][neighbor]['weight']
+                                for neighbor in self.G.neighbors(nodeid)])
             ind = np.argsort(weights)[:-self.max_degree-1:-1]
             neighbors = neighbors[ind]
             weights = weights[ind]
@@ -250,6 +270,7 @@ class NodeMinibatchIterator(object):
                 tail = np.random.choice(neighbors, self.max_degree - len(neighbors),
                                         p=weights/np.sum(weights), replace=True)
                 neighbors = np.append(neighbors, tail)
+            adj[self.id2idx[nodeid], :] = neighbors
         return adj, deg
 
     def construct_test_adj(self):
@@ -259,9 +280,10 @@ class NodeMinibatchIterator(object):
                 for neighbor in self.G.neighbors(nodeid)])
             if len(neighbors) == 0:
                 continue
+
             # MODS for weighted graph
-            weights = np.array([G[nodeid][neighbor]['weight']
-                                for neighbor in G.neighbors(nodeid)])
+            weights = np.array([self.G[nodeid][neighbor]['weight']
+                                for neighbor in self.G.neighbors(nodeid)])
             ind = np.argsort(weights)[:-self.max_degree-1:-1]
             neighbors = neighbors[ind]
             weights = weights[ind]
@@ -271,6 +293,7 @@ class NodeMinibatchIterator(object):
                 tail = np.random.choice(neighbors, self.max_degree - len(neighbors),
                                         p=weights/np.sum(weights), replace=True)
                 neighbors = np.append(neighbors, tail)
+
             adj[self.id2idx[nodeid], :] = neighbors
         return adj
 
